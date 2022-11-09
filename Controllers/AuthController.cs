@@ -1,0 +1,117 @@
+﻿#nullable disable
+using ApiProyect.Data;
+using ApiProyect.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace ApiProyect.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IConfiguration _configuration;
+        public AuthController(UserManager<AppUser> userManager,IConfiguration configuration)
+        {
+            _userManager = userManager;
+            _configuration = configuration;
+        }
+
+        [Route("Login")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Post(string email, string password)
+        {
+            var users = await _userManager.Users.ToListAsync();
+            if (String.IsNullOrEmpty(email) && (String.IsNullOrEmpty(password)))
+            {
+                return BadRequest("El email y la contaseña son obligatorias");
+            }
+            else
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return NotFound("El usuario no existe");
+                }
+                else
+                {
+                    var correct = _userManager.CheckPasswordAsync(user, password);
+                    if (!await correct)
+                    {
+                        return BadRequest("La contraseña es incorrecta");
+                    }
+                    else
+                    {
+                        var roles = await _userManager.GetRolesAsync(user);
+                        var claims = new List<Claim>
+                            {
+                                new Claim (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                                new Claim (JwtRegisteredClaimNames. Iat, DateTime.UtcNow.ToString()),
+                                new Claim("UserId", user.Id),
+                                new Claim ("UserName", user.UserName),
+                                new Claim("Email", user. Email),
+                            };
+                        foreach (var role in roles)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, role));
+                        }
+                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])); var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        var token = new JwtSecurityToken(
+                            _configuration["Jwt:Issuer"],
+                            _configuration["Jwt:Audience"],
+                        claims,
+                        expires: DateTime.UtcNow.AddMinutes(10),
+                        signingCredentials: credentials);
+                        return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    }
+                }
+            }
+
+        }
+        [Route("Register")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Register(string email, string password)
+        {
+            if ((String.IsNullOrEmpty(email)) && (String.IsNullOrEmpty(password)))
+            {
+                return BadRequest("El email y la contraseña son obligatorias");
+            }
+            var users = await _userManager.Users.ToListAsync();
+            var user = users.Find(x => x.Email == email);
+            if (user != null)
+            {
+                return BadRequest("El usuario ya esta registrado");
+            }
+
+            AppUser newUser = new AppUser
+            {
+                nombre ="a",
+                apellidos = "b",
+                CodPostal = 1111,
+                UserName = email,
+                NormalizedUserName = email.ToUpper(),
+                Email = email,
+                NormalizedEmail = email.ToUpper(),
+                EmailConfirmed = true,
+            };
+            var passwordHasher = new PasswordHasher<AppUser>();
+            newUser.PasswordHash = passwordHasher.HashPassword(newUser, password);
+
+            await _userManager.CreateAsync(newUser);
+            await _userManager.AddToRoleAsync(newUser, "default");
+            return Ok("Usuario registrado correctamente");
+        }
+    }
+}
