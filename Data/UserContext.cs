@@ -24,21 +24,23 @@ namespace ApiProyect.Data
             modelBuilder.Entity<Album>().ToTable(nameof(Album), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<Artist>().ToTable(nameof(Artist), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<Track>().ToTable(nameof(Track), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<AppUser>().Ignore(t => t.Roles);
 
             //Personalizar la tabla predefinida
-            modelBuilder.Entity<AppUser>(confTable =>
+
+            modelBuilder.Entity<AppUser>(b =>
             {
-                confTable.ToTable(nameof(AppUser));
+                b.ToTable(nameof(AppUser));
 
-                confTable.Property(u => u.nombre).HasMaxLength(20);
+                b.Property(u => u.nombre).HasMaxLength(20);
 
-                confTable.Property(u => u.apellidos).HasMaxLength(40);
+                b.Property(u => u.apellidos).HasMaxLength(40);
 
-                confTable.Property(u => u.CodPostal).HasDefaultValue(0000);
+                b.Property(u => u.CodPostal).HasDefaultValue(0000);
             });
 
             //Hacer los seeders
-
+            
             //Lista de roles
             List<IdentityRole> roles = new List<IdentityRole>();
             roles.Add(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });

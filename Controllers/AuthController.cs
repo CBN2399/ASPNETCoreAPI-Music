@@ -70,7 +70,7 @@ namespace ApiProyect.Controllers
                             _configuration["Jwt:Issuer"],
                             _configuration["Jwt:Audience"],
                         claims,
-                        expires: DateTime.UtcNow.AddMinutes(10),
+                        expires: DateTime.UtcNow.AddMinutes(15),
                         signingCredentials: credentials);
                         return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                     }
@@ -82,28 +82,28 @@ namespace ApiProyect.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Register(string email, string password)
+        public async Task<ActionResult> Register( [FromBody] AppUser user, string password)
         {
-            if ((String.IsNullOrEmpty(email)) && (String.IsNullOrEmpty(password)))
+            if ((String.IsNullOrEmpty(user.Email)) && (String.IsNullOrEmpty(password)))
             {
                 return BadRequest("El email y la contraseña son obligatorias");
             }
             var users = await _userManager.Users.ToListAsync();
-            var user = users.Find(x => x.Email == email);
-            if (user != null)
+            var Existuser = users.Find(x => x.Email == user.Email);
+            if (Existuser != null)
             {
                 return BadRequest("El usuario ya esta registrado");
             }
 
             AppUser newUser = new AppUser
             {
-                nombre ="a",
-                apellidos = "b",
-                CodPostal = 1111,
-                UserName = email,
-                NormalizedUserName = email.ToUpper(),
-                Email = email,
-                NormalizedEmail = email.ToUpper(),
+                nombre = user.nombre,
+                apellidos = user.apellidos,
+                CodPostal = user.CodPostal,
+                UserName = user.UserName,
+                NormalizedUserName = user.NormalizedUserName.ToUpper(),
+                Email = user.Email,
+                NormalizedEmail = user.NormalizedEmail.ToUpper(),
                 EmailConfirmed = true,
             };
             var passwordHasher = new PasswordHasher<AppUser>();

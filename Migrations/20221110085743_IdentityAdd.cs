@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ApiProyect.Migrations
 {
-    public partial class AddIdentity : Migration
+    public partial class IdentityAdd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

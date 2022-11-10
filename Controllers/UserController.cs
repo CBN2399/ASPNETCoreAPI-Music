@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiProyect.Controllers
 {
-    //[Authorize(Roles ="Admin")]
+    [Authorize(Roles ="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -25,9 +25,12 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<AppUser>>> Get()
         {
-            var user = await _userContext.Users.ToListAsync();
-           // await _userManager.
-            return (user);
+            var users = await _userContext.Users.ToListAsync();
+            foreach(var user in users)
+            {
+                user.Roles = await _userManager.GetRolesAsync(user);
+            }
+            return Ok(users);
         }
     }
 }

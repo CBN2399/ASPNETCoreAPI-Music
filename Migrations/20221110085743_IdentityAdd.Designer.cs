@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiProyect.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20221109202340_DataAdd")]
-    partial class DataAdd
+    [Migration("20221110085743_IdentityAdd")]
+    partial class IdentityAdd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -123,65 +123,6 @@ namespace ApiProyect.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AppUser", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "43f94c8a-72fb-4d5c-9d3b-cce4b252ac64",
-                            AccessFailedCount = 0,
-                            CodPostal = 38007,
-                            ConcurrencyStamp = "6b35ae13-2007-48d0-affc-b3a56d9bf006",
-                            Email = "Admin@disquera.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@DISQUERA.COM",
-                            NormalizedUserName = "ADMIN@DISQUERA.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAELQujZPtRVP587EewFHypeJoLD/ji1c2wvfQYbd95HPzVpSRb1h8wWTiO4TEY1Wu7A==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "0e18e0a8-9ca6-4d64-94aa-6d4bc42c7ff1",
-                            TwoFactorEnabled = false,
-                            UserName = "Admin@disquera.com",
-                            apellidos = "Bartolome Navarro",
-                            nombre = "Cesar"
-                        },
-                        new
-                        {
-                            Id = "338ea642-53d1-4d25-84aa-4917d4c3cd17",
-                            AccessFailedCount = 0,
-                            CodPostal = 38010,
-                            ConcurrencyStamp = "3cf3d5d9-886d-42a8-bfa9-40bc8c09ad7f",
-                            Email = "Manager@disquera.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "MANAGER@DISQUERA.COM",
-                            NormalizedUserName = "MANAGER@DISQUERA.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEA5Cy/bJodvANg+6Ynk0ej+w4asGN898q+rBO5ffaBb3rvWdSTu+y1CL6Gq7Ci63nQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "4089f78c-1f6f-4e07-9370-0084809aece2",
-                            TwoFactorEnabled = false,
-                            UserName = "Manager@disquera.com",
-                            apellidos = "Gomez Gil",
-                            nombre = "Pepe"
-                        },
-                        new
-                        {
-                            Id = "871212fb-9bf6-4bf7-b0f6-8f66b9c4e1a8",
-                            AccessFailedCount = 0,
-                            CodPostal = 38010,
-                            ConcurrencyStamp = "8fb688b5-e4e5-43d6-90ac-ba6e9e22f2e1",
-                            Email = "User1@disquera.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER1@DISQUERA.COM",
-                            NormalizedUserName = "USER1@DISQUERA.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEO8Tc1E73Qd+cJf/UJuaGkWTAQQWX2jfJI2EeTwo1wFDhcb6FV+yFD7LZGiE+XWW3w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "2c1a968e-f6ab-49c9-9770-5c9b357968d7",
-                            TwoFactorEnabled = false,
-                            UserName = "User1@disquera.com",
-                            apellidos = "Martin Hernandez",
-                            nombre = "Manolo"
-                        });
                 });
 
             modelBuilder.Entity("ApiProyect.Models.Artist", b =>
@@ -272,29 +213,6 @@ namespace ApiProyect.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "66658887-ecd8-4b24-a514-1851519a2b0d",
-                            ConcurrencyStamp = "d12af09b-383b-4724-b8a4-82b8b80bc6bd",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "c6b0de03-868b-4ced-b532-01dce807cc25",
-                            ConcurrencyStamp = "113e1e5b-e51b-44ae-bc04-324bc54d9d50",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "6959cc7a-d816-49e2-86db-07b1d1f0d8b5",
-                            ConcurrencyStamp = "ae656a9c-e697-45a3-af13-2a07be04e7cd",
-                            Name = "default",
-                            NormalizedName = "DEFAULT"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -382,23 +300,6 @@ namespace ApiProyect.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "43f94c8a-72fb-4d5c-9d3b-cce4b252ac64",
-                            RoleId = "66658887-ecd8-4b24-a514-1851519a2b0d"
-                        },
-                        new
-                        {
-                            UserId = "338ea642-53d1-4d25-84aa-4917d4c3cd17",
-                            RoleId = "c6b0de03-868b-4ced-b532-01dce807cc25"
-                        },
-                        new
-                        {
-                            UserId = "871212fb-9bf6-4bf7-b0f6-8f66b9c4e1a8",
-                            RoleId = "6959cc7a-d816-49e2-86db-07b1d1f0d8b5"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
