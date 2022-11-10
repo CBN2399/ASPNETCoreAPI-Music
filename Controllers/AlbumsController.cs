@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable disable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiProyect.Data;
 using ApiProyect.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiProyect.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AlbumsController : ControllerBase
@@ -23,28 +26,56 @@ namespace ApiProyect.Controllers
 
         // GET: api/Albums
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<Album>>> GetAlbums()
         {
-            return await _context.Albums.ToListAsync();
+            return await _context.Albums
+                .Include(e => e.Artist)
+                .Include(e => e.Tracks)
+                .OrderByDescending(e => e.Title)
+                .Take(10)
+                .ToListAsync();
         }
 
         // GET: api/Albums/5
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Album>> GetAlbum(int id)
         {
             var album = await _context.Albums.FindAsync(id);
-
+           
             if (album == null)
             {
                 return NotFound();
             }
 
-            return album;
+            List<Track> canciones =  await (from a in _context.Tracks
+                                           where a.AlbumId == album.AlbumId
+                                           select a).ToListAsync();
+
+            album.Tracks = canciones;
+
+            Artist artista =  await (from a in _context.Artists
+                                         where a.ArtistId == album.ArtistId
+                                         select a).SingleAsync();
+         
+            album.Artist = artista;
+
+            return Ok(album);
         }
 
         // PUT: api/Albums/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PutAlbum(int id, Album album)
         {
             if (id != album.AlbumId)
@@ -76,6 +107,10 @@ namespace ApiProyect.Controllers
         // POST: api/Albums
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<Album>> PostAlbum(Album album)
         {
             _context.Albums.Add(album);
@@ -86,6 +121,11 @@ namespace ApiProyect.Controllers
 
         // DELETE: api/Albums/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteAlbum(int id)
         {
             var album = await _context.Albums.FindAsync(id);
