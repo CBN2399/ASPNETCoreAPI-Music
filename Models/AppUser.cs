@@ -14,10 +14,39 @@ namespace ApiProyect.Models
         public string nombre { get; set; }
 
         public string apellidos { get; set; }
-
+        [Range(10000,99999)]
         public int CodPostal { get; set; }
+
 
         [SwaggerSchema(ReadOnly =true)]
         public IList<string> Roles { get; set; }
+
+        [SwaggerSchema(ReadOnly = true)]
+        public override string UserName { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override string NormalizedUserName { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override string NormalizedEmail { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override bool EmailConfirmed { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override string PasswordHash { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override string SecurityStamp { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+        [SwaggerSchema(ReadOnly = true)]
+        public override string PhoneNumber { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override bool PhoneNumberConfirmed { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override bool TwoFactorEnabled { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override DateTimeOffset? LockoutEnd { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override bool LockoutEnabled { get; set; }
+        [SwaggerSchema(ReadOnly = true)]
+        public override int AccessFailedCount { get; set; }
+
     }
 }
