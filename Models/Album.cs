@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ApiProyect.Models
 {
@@ -18,6 +19,7 @@ namespace ApiProyect.Models
         }
 
         [Key]
+        [SwaggerSchema(ReadOnly =true)]
         public int AlbumId { get; set; }
         [Required]
         [StringLength(160)]
@@ -28,6 +30,7 @@ namespace ApiProyect.Models
         [InverseProperty("Albums")]
         public virtual Artist Artist { get; set; }
         [InverseProperty("Album")]
+        [SwaggerSchema(ReadOnly = true)]
         public virtual ICollection<Track> Tracks { get; set; }
     }
 }

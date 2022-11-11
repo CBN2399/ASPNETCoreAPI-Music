@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ApiProyect.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AlbumsController : ControllerBase
@@ -107,21 +107,26 @@ namespace ApiProyect.Controllers
         // POST: api/Albums
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize(Roles = "Admin,Manager")]
+       // [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<Album>> PostAlbum(Album album)
+        public async Task<IActionResult> PostAlbum([Bind("AlbumId,Title,ArtistId")] Album album)
         {
-            _context.Albums.Add(album);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAlbum", new { id = album.AlbumId }, album);
+            if (ModelState.IsValid)
+            {
+                _context.Albums.Add(album);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetAlbum", new { id = album.AlbumId }, album);
+            }
+            return BadRequest();
+           
         }
 
         // DELETE: api/Albums/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Manager")]
+      //  [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

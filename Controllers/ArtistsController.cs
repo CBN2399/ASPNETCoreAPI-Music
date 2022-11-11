@@ -73,30 +73,29 @@ namespace ApiProyect.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutArtist(int id, Artist artist)
         {
-            if (id != artist.ArtistId)
+            if (!ArtistExists(id))
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(artist).State = EntityState.Modified;
-
-            try
+            if (ModelState.IsValid) 
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ArtistExists(id))
+                try
                 {
-                    return NotFound();
+                    artist.ArtistId = id;
+                    _context.Update(artist);
+                    await _context.SaveChangesAsync();
+                    return NoContent();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
             }
+            return BadRequest();
 
-            return NoContent();
+
+
         }
 
         // POST: api/Artists
@@ -106,12 +105,17 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<ActionResult<Artist>> PostArtist(Artist artist)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PostArtist([Bind("ArtistId,Name")] Artist artist)
         {
-            _context.Artists.Add(artist);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetArtist", new { id = artist.ArtistId }, artist);
+            if (ModelState.IsValid)
+            {
+                _context.Artists.Add(artist);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetArtist", new { id = artist.ArtistId }, artist);
+            }
+            return BadRequest();
+           
         }
 
         // DELETE: api/Artists/5
