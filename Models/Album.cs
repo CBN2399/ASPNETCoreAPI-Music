@@ -24,6 +24,8 @@ namespace ApiProyect.Models
         [Required]
         [StringLength(160)]
         public string Title { get; set; }
+
+        [SwaggerSchema(ReadOnly = true)]
         public int ArtistId { get; set; }
 
         [ForeignKey("ArtistId")]

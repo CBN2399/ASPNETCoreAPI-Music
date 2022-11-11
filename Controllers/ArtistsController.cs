@@ -46,19 +46,12 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<Artist>> GetArtist(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
+            var artist = await _context.Artists.Include(a => a.Albums).FirstOrDefaultAsync(a => a.ArtistId == id);
 
             if (artist == null)
             {
                 return NotFound();
             }
-
-            List<Album> listAlbum =  await (from album in _context.Albums
-                                           where album.ArtistId == artist.ArtistId
-                                           select album).ToListAsync();
-            artist.Albums = listAlbum;
-
-
             return Ok(artist);
         }
 
@@ -93,9 +86,6 @@ namespace ApiProyect.Controllers
                 }
             }
             return BadRequest();
-
-
-
         }
 
         // POST: api/Artists
@@ -106,7 +96,7 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostArtist([Bind("ArtistId,Name")] Artist artist)
+        public async Task<IActionResult> PostArtist( Artist artist)
         {
             if (ModelState.IsValid)
             {

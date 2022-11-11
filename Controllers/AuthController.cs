@@ -31,7 +31,6 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Post(string email, string password)
         {
-            var users = await _userManager.Users.ToListAsync();
             if (String.IsNullOrEmpty(email) && (String.IsNullOrEmpty(password)))
             {
                 return BadRequest("El email y la contaseña son obligatorias");

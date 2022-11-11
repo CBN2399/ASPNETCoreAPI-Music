@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ApiProyect.Controllers
 {
-   // [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AlbumsController : ControllerBase
@@ -45,25 +45,12 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Album>> GetAlbum(int id)
         {
-            var album = await _context.Albums.FindAsync(id);
+            var album = await _context.Albums.Include(a => a.Artist).Include(a=> a.Tracks).FirstOrDefaultAsync(a => a.AlbumId == id);
            
             if (album == null)
             {
                 return NotFound();
             }
-
-            List<Track> canciones =  await (from a in _context.Tracks
-                                           where a.AlbumId == album.AlbumId
-                                           select a).ToListAsync();
-
-            album.Tracks = canciones;
-
-            Artist artista =  await (from a in _context.Artists
-                                         where a.ArtistId == album.ArtistId
-                                         select a).SingleAsync();
-         
-            album.Artist = artista;
-
             return Ok(album);
         }
 
@@ -78,50 +65,63 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PutAlbum(int id, Album album)
         {
-            if (id != album.AlbumId)
+            if (!AlbumExists(id))
             {
-                return BadRequest();
+                return NotFound("El album no se encuentra en la base de datos");
             }
 
-            _context.Entry(album).State = EntityState.Modified;
-
-            try
+            if (ModelState.IsValid) 
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AlbumExists(id))
+                var artistas = await _context.Artists.ToListAsync();
+                Artist artist = artistas.Find(e => e.Name == album.Artist.Name);
+                if (artist == null)
                 {
-                    return NotFound();
+                    return BadRequest("El artista no se encuentra en la base de datos");
                 }
-                else
+
+                try
+                {
+                    album.AlbumId = id;
+                    album.ArtistId = artist.ArtistId;
+                    album.Artist = artist;
+                    _context.Update(album);
+                    await _context.SaveChangesAsync();
+                    return NoContent();
+                }
+                catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
             }
-
-            return NoContent();
+            return BadRequest("El album editado es invalido");
         }
 
         // POST: api/Albums
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-       // [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAlbum([Bind("AlbumId,Title,ArtistId")] Album album)
+        public async Task<IActionResult> PostAlbum(Album album)
         {
             if (ModelState.IsValid)
             {
+                var artistas = await _context.Artists.ToListAsync();
+                Artist artist = artistas.Find(e => e.Name == album.Artist.Name);
+                if (artist == null)
+                {
+                    return BadRequest("El artista no se encuentra en la base de datos");
+                }
+
+                album.Artist = artist;
+                album.ArtistId = artist.ArtistId;
                 _context.Albums.Add(album);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction("GetAlbum", new { id = album.AlbumId }, album);
             }
             return BadRequest();
-           
         }
 
         // DELETE: api/Albums/5
