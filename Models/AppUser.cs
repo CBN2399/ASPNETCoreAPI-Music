@@ -14,7 +14,6 @@ namespace ApiProyect.Models
         public string nombre { get; set; }
 
         public string apellidos { get; set; }
-        [Range(10000,99999)]
         public int CodPostal { get; set; }
 
 

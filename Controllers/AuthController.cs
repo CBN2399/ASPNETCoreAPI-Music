@@ -94,30 +94,27 @@ namespace ApiProyect.Controllers
                 return BadRequest("El usuario ya esta registrado");
             }
 
-            if(ModelState.IsValid) 
+ 
+            AppUser newUser = new AppUser
             {
-                AppUser newUser = new AppUser
-                {
-                    nombre = user.nombre,
-                    apellidos = user.apellidos,
-                    CodPostal = user.CodPostal,
-                    UserName = user.UserName,
-                    NormalizedUserName = user.NormalizedUserName.ToUpper(),
-                    Email = user.Email,
-                    NormalizedEmail = user.NormalizedEmail.ToUpper(),
-                    EmailConfirmed = true,
-                };
-                var passwordHasher = new PasswordHasher<AppUser>();
-                newUser.PasswordHash = passwordHasher.HashPassword(newUser, password);
+                nombre = user.nombre,
+                apellidos = user.apellidos,
+                CodPostal = user.CodPostal,
+                UserName = user.UserName,
+                NormalizedUserName = user.NormalizedUserName.ToUpper(),
+                Email = user.Email,
+                NormalizedEmail = user.NormalizedEmail.ToUpper(),
+                EmailConfirmed = true,
+            };
+            var passwordHasher = new PasswordHasher<AppUser>();
+            newUser.PasswordHash = passwordHasher.HashPassword(newUser, password);
 
-                await _userManager.CreateAsync(newUser);
-                await _userManager.AddToRoleAsync(newUser, "default");
-                return Ok("Usuario registrado correctamente");
+            await _userManager.CreateAsync(newUser);
+            await _userManager.AddToRoleAsync(newUser, "default");
+            return Ok("Usuario registrado correctamente");
 
-            }
-            return BadRequest("Se ha introducido un campo erroneo");
-
-            
         }
+        return BadRequest("Se ha introducido un campo erroneo");
+
     }
 }
