@@ -25,6 +25,7 @@ namespace ApiProyect.Data
             modelBuilder.Entity<Artist>().ToTable(nameof(Artist), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<Track>().ToTable(nameof(Track), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<AppUser>().Ignore(t => t.Roles);
+            modelBuilder.Entity<AppUser>().Ignore(t => t.clave);
 
             //Personalizar la tabla predefinida
 

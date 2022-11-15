@@ -16,11 +16,12 @@ namespace ApiProyect.Models
         public string apellidos { get; set; }
         public int CodPostal { get; set; }
 
+        public string clave { get; set; }
 
         [SwaggerSchema(ReadOnly =true)]
         public IList<string> Roles { get; set; }
 
-        [SwaggerSchema(ReadOnly = true)]
+       /* [SwaggerSchema(ReadOnly = true)]
         public override string UserName { get; set; }
         [SwaggerSchema(ReadOnly = true)]
         public override string NormalizedUserName { get; set; }
@@ -45,7 +46,7 @@ namespace ApiProyect.Models
         [SwaggerSchema(ReadOnly = true)]
         public override bool LockoutEnabled { get; set; }
         [SwaggerSchema(ReadOnly = true)]
-        public override int AccessFailedCount { get; set; }
+        public override int AccessFailedCount { get; set; }*/
 
     }
 }

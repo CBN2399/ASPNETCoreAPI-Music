@@ -81,9 +81,9 @@ namespace ApiProyect.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Register( [FromBody] AppUser user, string password)
+        public async Task<ActionResult> Register( [FromBody] AppUser user)
         {
-            if ((String.IsNullOrEmpty(user.Email)) && (String.IsNullOrEmpty(password)))
+            if ((String.IsNullOrEmpty(user.Email)) && (String.IsNullOrEmpty(user.clave)))
             {
                 return BadRequest("El email y la contraseña son obligatorias");
             }
@@ -100,21 +100,21 @@ namespace ApiProyect.Controllers
                 nombre = user.nombre,
                 apellidos = user.apellidos,
                 CodPostal = user.CodPostal,
-                UserName = user.UserName,
-                NormalizedUserName = user.NormalizedUserName.ToUpper(),
+                UserName = user.Email,
+                NormalizedUserName = user.NormalizedEmail.ToUpper(),
                 Email = user.Email,
                 NormalizedEmail = user.NormalizedEmail.ToUpper(),
                 EmailConfirmed = true,
             };
             var passwordHasher = new PasswordHasher<AppUser>();
-            newUser.PasswordHash = passwordHasher.HashPassword(newUser, password);
+            newUser.PasswordHash = passwordHasher.HashPassword(newUser, user.clave);
 
             await _userManager.CreateAsync(newUser);
             await _userManager.AddToRoleAsync(newUser, "default");
             return Ok("Usuario registrado correctamente");
 
         }
-        return BadRequest("Se ha introducido un campo erroneo");
+        
 
     }
 }
