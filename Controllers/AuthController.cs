@@ -12,7 +12,7 @@ using System.Text;
 
 namespace ApiProyect.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace ApiProyect.Controllers
             }
             else
             {
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await _userManager.Users.FirstOrDefaultAsync(a => a.Email == email );
                 if (user == null)
                 {
                     return NotFound("El usuario no existe");
@@ -97,9 +97,9 @@ namespace ApiProyect.Controllers
  
             AppUser newUser = new AppUser
             {
-                nombre = user.nombre,
-                apellidos = user.apellidos,
-                CodPostal = user.CodPostal,
+                Nombre = user.Nombre,
+                Apellidos = user.Apellidos,
+                PostalCode = user.PostalCode,
                 UserName = user.Email,
                 NormalizedUserName = user.NormalizedEmail.ToUpper(),
                 Email = user.Email,

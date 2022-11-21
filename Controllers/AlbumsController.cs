@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace ApiProyect.Controllers
 {
     //[Authorize]
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class AlbumsController : ControllerBase
     {

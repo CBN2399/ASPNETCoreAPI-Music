@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ApiProyect.Controllers
 {
     [Authorize(Roles ="Admin")]
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -27,12 +27,11 @@ namespace ApiProyect.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<IEnumerable<AppUser>>> Get()
         {
-            var users = await _userContext.Users.ToListAsync();
-            foreach(var user in users)
+            foreach(var user in _userManager.Users)
             {
                 user.Roles = await _userManager.GetRolesAsync(user);
             }
-            return Ok(users);
+            return Ok(await _userContext.Users.ToListAsync());
         }
     }
 }

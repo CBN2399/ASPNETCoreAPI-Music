@@ -2,6 +2,7 @@ using ApiProyect.Data;
 using ApiProyect.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -50,13 +51,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(a => a.EnableAnnotations());
+/*builder.WebHost.ConfigureKestrel(serveroptions => 
+{
+    serveroptions.ConfigureHttpsDefaults(listenOptions =>
+    {
+      
+    });
+
+});*/
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseSwagger();
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
