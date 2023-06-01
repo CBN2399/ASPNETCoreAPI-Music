@@ -1,1 +1,4 @@
-# ApiProyect
+# ASPNETCoreAPI Music
+The ASP.NET API is a powerful web service designed to provide music label data in JSON format. This API exposes endpoints that allow clients to retrieve information about albums, songs, artists, and more. The data is returned in a structured JSON format, making it easy for clients to consume and process the information. 
+
+One notable feature of this API is its authentication mechanism using JSON Web Tokens (JWT). Clients can obtain a JWT by authenticating with valid credentials, such as a username and password, and including it in subsequent API requests. This ensures secure access to protected endpoints and allows for user-specific operations and data retrieval. The API also provides a wide range of functionalities, such as filtering, sorting, and pagination, allowing clients to efficiently query and retrieve the desired music label information. With its JSON-based responses and secure authentication using JWT, this ASP.NET API offers a reliable and secure solution for accessing and leveraging music label data.
